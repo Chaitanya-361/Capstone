@@ -1,0 +1,1 @@
+Demonstrates temporal video deepfake analysis: uniform 16-frame sampling, per-frame facial risk assessment, keyframe argmax extraction, and temporal jitter measurement.

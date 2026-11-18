@@ -1,0 +1,115 @@
+# ==============================================================================
+# Git Ignore - Multimodal Fake News & Deepfake Detection System
+# ==============================================================================
+
+# --- Python & Bytecode ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Virtual Environments ---
+.venv/
+venv/
+ENV/
+env/
+.env
+.env.*
+
+# --- Python Testing & Coverage ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# --- Large Datasets & Raw Media (DO NOT TRACK IN GIT) ---
+data/
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.tsv
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.npy
+*.npz
+
+# Video & Large Media
+*.mp4
+*.mov
+*.MOV
+*.avi
+*.mkv
+*.webm
+# Allow small curated demo presets for local evaluation
+!demo_samples/**/*.mp4
+!demo_samples/**/*.jpg
+!demo_samples/**/*.png
+!demo_samples/**/*.txt
+
+# --- Model Checkpoints & Pre-trained Weights (Too large for Git) ---
+models/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.onnx
+*.safetensors
+face_detection_yunet_2023mar.onnx
+
+# --- Cache & Logs ---
+.cache/
+cache/
+*.log
+*.tmp
+*.bak
+*.orig
+tmp/
+
+# --- IDE & Operating System ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*.code-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# --- Experiment Tracking ---
+wandb/
+runs/
+logs/
+tensorboard/
+mlruns/
