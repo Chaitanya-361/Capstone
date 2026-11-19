@@ -58,6 +58,21 @@ class VisionBranch(nn.Module):
             ),
         ])
 
+        # Multi-Backbone Ensemble: Vision Transformer (ViT) for Generative / StyleGAN / Diffusion
+        self.vit_model = None
+        self.vit_processor = None
+        vit_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models", "pretrained_deepfake")
+        if os.path.exists(os.path.join(vit_dir, "model.safetensors")):
+            try:
+                from transformers import AutoImageProcessor, AutoModelForImageClassification
+                self.vit_processor = AutoImageProcessor.from_pretrained(vit_dir)
+                self.vit_model = AutoModelForImageClassification.from_pretrained(vit_dir)
+                self.vit_model.to(self.device)
+                self.vit_model.eval()
+                print(f"Loaded Vision Transformer (ViT) ensemble from {vit_dir}")
+            except Exception as e:
+                print(f"ViT ensemble load skipped: {e}")
+
         self.to(self.device)
         self.eval()
 
@@ -132,10 +147,30 @@ class VisionBranch(nn.Module):
         tensor = self.transform(image).unsqueeze(0).to(self.device)
         outputs = self.forward(tensor)
 
-        probs = outputs["probs"].squeeze(0).cpu().numpy()
-        real_prob = float(probs[0])
-        deepfake_prob = float(probs[1])
+        eff_probs = outputs["probs"].squeeze(0).cpu().numpy()
+        eff_real_prob = float(eff_probs[0])
+        eff_deepfake_prob = float(eff_probs[1])
 
+        # Multi-backbone ensemble with ViT
+        if self.vit_model is not None and self.vit_processor is not None:
+            try:
+                vit_inputs = self.vit_processor(image, return_tensors="pt").to(self.device)
+                with torch.no_grad():
+                    vit_logits = self.vit_model(**vit_inputs).logits
+                    vit_prob = float(torch.softmax(vit_logits, dim=1)[0, 1].item())
+
+                # Calibrated ensemble:
+                # If either detector shows strong evidence (>0.60), flag as deepfake
+                if max(eff_deepfake_prob, vit_prob) > 0.60:
+                    deepfake_prob = max(eff_deepfake_prob, vit_prob)
+                else:
+                    deepfake_prob = 0.5 * eff_deepfake_prob + 0.5 * vit_prob
+            except Exception:
+                deepfake_prob = eff_deepfake_prob
+        else:
+            deepfake_prob = eff_deepfake_prob
+
+        real_prob = 1.0 - deepfake_prob
         label = "Deepfake / Manipulated" if deepfake_prob > 0.5 else "Authentic"
         confidence = max(real_prob, deepfake_prob)
 

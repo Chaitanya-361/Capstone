@@ -205,7 +205,7 @@ class VideoAnalyzer:
             "flagged_frame_ratio": flagged_ratio,
             "temporal_jitter": temporal_jitter,
             "key_frame_time_sec": key_frame_time,
-            "is_flagged": (video_risk >= self.risk_threshold or flagged_ratio >= 0.25),
+            "is_flagged": bool(flagged_ratio >= 0.40 or (video_risk >= 0.60 and temporal_jitter >= 0.15)),
             "total_frames_sampled": len(frame_records),
             "per_frame": [
                 {

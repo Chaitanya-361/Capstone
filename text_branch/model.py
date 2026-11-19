@@ -134,11 +134,12 @@ class PretrainedTextBranch(nn.Module):
         text_lower = text.lower()
 
         sensational_cues = [
-            "shocking", "bombshell", "secret alien", "extraterrestrial",
+            "shocking", "bombshell", "alien", "extraterrestrial",
             "exposé", "expose", "urgent alert", "terrifying truth", "miracle cure",
             "mind-control", "they don't want you to know", "hidden truth",
-            "secret bunker", "alien invasion", "deep state", "illuminati",
-            "bioweapon", "crisis actor", "censored by",
+            "secret bunker", "deep state", "illuminati",
+            "bioweapon", "crisis actor", "censored by", "nanotechnology",
+            "reptilian", "megastructure", "hollow earth", "time-travel", "conspiracy",
         ]
         cue_hits = sum(1 for w in sensational_cues if w in text_lower)
         is_breaking_disaster = "breaking:" in text_lower and any(
